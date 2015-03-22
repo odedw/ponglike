@@ -3,9 +3,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class BoardManager : MonoBehaviour {
-
-    public int Columns = 12;
-    public int Rows = 9;
+  
     public GameObject[] FloorTiles;
     public GameObject[] WallTiles;
     public GameObject LeftCornerWall;
@@ -17,23 +15,22 @@ public class BoardManager : MonoBehaviour {
     void BoardSetup()
     {
         boardHolder = new GameObject("Board").transform;
-        for (var x = 0; x < Columns; x++)
+        for (var x = 0; x < GameState.Instance.Columns; x++)
         {
-            for (var y = 0; y < Rows; y++)
+            for (var y = 0; y < GameState.Instance.Rows; y++)
             {
                 var toInstantiate = FloorTiles[Random.Range(0, FloorTiles.Length)];
 
-                if (y == 0 || y == Rows-1)
+                if (y == 0 || y == GameState.Instance.Rows - 1)
                 {
                     if (x == 0)
                         toInstantiate = LeftCornerWall;
-                    else if (x == Columns - 1)
+                    else if (x == GameState.Instance.Columns - 1)
                         toInstantiate = RightCornerWall;
                     else
                         toInstantiate = WallTiles[Random.Range(0, WallTiles.Length)];
 
-                    Debug.Log(y+","+x+": "+toInstantiate.name);
-
+//                    Debug.Log(y+","+x+": "+toInstantiate.name);
                 }
 
                 var instance = Instantiate(toInstantiate, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
