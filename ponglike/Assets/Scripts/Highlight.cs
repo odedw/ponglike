@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class OpacityChanger : MonoBehaviour
+public class Highlight : MonoBehaviour
 {
+    public delegate void HighlighterClicked(GameObject highlighter);
+    public event HighlighterClicked OnHighlighterClicked;
+
     private float initialOpacity;
     private SpriteRenderer spriteRenderer;
 
@@ -20,5 +23,10 @@ public class OpacityChanger : MonoBehaviour
     void OnMouseExit()
     {
         spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, initialOpacity);
+    }
+
+    void OnMouseDown()
+    {
+        if (OnHighlighterClicked != null) OnHighlighterClicked(gameObject);
     }
 }
