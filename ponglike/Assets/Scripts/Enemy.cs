@@ -9,15 +9,23 @@ public class Enemy : MovingObject
     //states
     protected override bool IsUnitsTurn { get { return GameState.Instance.IsEnemyTurn; } set { GameState.Instance.IsEnemyTurn = value; } }
     private bool nextMoveScheduled;
+    
     //config
     protected override int StartColumn { get { return 0; }}
     protected override int EndColumn { get { return GameState.Instance.Columns - 1; } }
+    protected override bool DesiredFogOfWarState { get { return false; } }
+
     protected override int UnitAdvanceDirection { get { return 1; }}
 
     void Update()
     {
         //If it's not the player's turn, or we're to compute move or we're moving, exit.
         if (!IsUnitsTurn || isMoving || nextMoveScheduled) return;
+
+        if (!fogOfWarReset)
+        {
+            ResetFogOfWar();
+        }
 
         Invoke("NextMove", MoveDelay);
         nextMoveScheduled = true;

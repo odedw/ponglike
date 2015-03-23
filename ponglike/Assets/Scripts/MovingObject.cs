@@ -17,11 +17,13 @@ public abstract class MovingObject : MonoBehaviour {
     protected bool isMoving;
     protected abstract bool IsUnitsTurn { get; set; }
     protected bool InitialUnitPlacingSet { get { return objectRenderer.enabled; } set { objectRenderer.enabled = value; } }
+    protected bool fogOfWarReset { get; set; }
 
     //unit specific config
     protected abstract int StartColumn { get; }
     protected abstract int UnitAdvanceDirection { get; }
     protected abstract int EndColumn { get; }
+    protected abstract bool DesiredFogOfWarState { get; }
 
     // Use this for initialization
     protected virtual void Start()
@@ -98,5 +100,12 @@ public abstract class MovingObject : MonoBehaviour {
         isMoving = false;
         IsUnitsTurn = false;
         InitialUnitPlacingSet = false;
+        fogOfWarReset = false;
+    }
+
+    protected void ResetFogOfWar()
+    {
+        GameManager.Instance.BoardManager.SetAllFogOfWar(DesiredFogOfWarState);
+        fogOfWarReset = true;
     }
 }

@@ -5,7 +5,7 @@ public class GameManager : MonoBehaviour {
     
     public static GameManager Instance { get; private set; }
 
-    private BoardManager boardManager;
+    public BoardManager BoardManager { get; set; }
     private bool settingUp = true;	
 
     private void Awake()
@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
 
         //get components
-        boardManager = GetComponent<BoardManager>();
+        BoardManager = GetComponent<BoardManager>();
 
         InitGame();
     }
@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour {
     private void InitGame()
     {
         settingUp = true;
-        boardManager.SetupScene();
+        BoardManager.SetupScene();
         settingUp = false;
     }
 }

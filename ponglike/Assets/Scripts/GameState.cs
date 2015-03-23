@@ -10,8 +10,8 @@ public class GameState : MonoBehaviour {
     public int Rows = 9;
 
     //Game State
-    private bool isPlayersTurn;
-    private bool isEnemyTurn = true;
+    private bool isPlayersTurn = true;
+    private bool isEnemyTurn;
     public bool IsPlayersTurn {get { return isPlayersTurn; } set { isPlayersTurn = value; isEnemyTurn = !value; }}
     public bool IsEnemyTurn { get { return isEnemyTurn; } set { isEnemyTurn = value; isPlayersTurn = !value; } }
 

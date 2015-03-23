@@ -17,13 +17,19 @@ public class Player : MovingObject
     protected override int StartColumn { get { return GameState.Instance.Columns - 1; } }
     protected override int UnitAdvanceDirection { get { return - 1; } }
     protected override int EndColumn { get { return 0; } }
-
+    protected override bool DesiredFogOfWarState { get { return true; } }
+    
     private bool waitingForInputMovement;
 
 	// Update is called once per frame
 	void Update () {
         //If it's not the player's turn, or we're waiting for input or we're moving, exit.
         if (!IsUnitsTurn || areMovesHighlighted || isMoving) return;
+
+	    if (!fogOfWarReset)
+	    {
+            ResetFogOfWar();
+	    }
 
 	    ComputePossibleMoves();
 	    HighlightPossibleMoves();
@@ -38,6 +44,7 @@ public class Player : MovingObject
             highlight.transform.position = possibleMove;
             highlight.GetComponent<Highlight>().OnHighlighterClicked += Player_OnHighlighterClicked;
             highlights.Add(highlight);
+            GameManager.Instance.BoardManager.SetFogOfWarForPosition(possibleMove, false);
         }
         areMovesHighlighted = true;
     }
