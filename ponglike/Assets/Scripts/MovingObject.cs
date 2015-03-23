@@ -11,16 +11,17 @@ public abstract class MovingObject : MonoBehaviour {
     private BoxCollider2D boxCollider; 		//The BoxCollider2D component attached to this object.
     private Rigidbody2D rb2D;				//The Rigidbody2D component attached to this object.
     private float inverseMoveTime;			//Used to make movement more efficient.
+    private Renderer objectRenderer;
 
     //states
     protected bool isMoving;
-    protected abstract bool InitialUnitPlacingSet { get; set; }
     protected abstract bool IsUnitsTurn { get; set; }
+    protected bool InitialUnitPlacingSet { get { return objectRenderer.enabled; } set { objectRenderer.enabled = value; } }
 
     //unit specific config
-    protected abstract int PlacementColumn { get; }
+    protected abstract int StartColumn { get; }
     protected abstract int UnitAdvanceDirection { get; }
-    protected abstract int TargetColumn { get; }
+    protected abstract int EndColumn { get; }
 
     // Use this for initialization
     protected virtual void Start()
@@ -28,6 +29,8 @@ public abstract class MovingObject : MonoBehaviour {
         boxCollider = GetComponent<BoxCollider2D>();
         rb2D = GetComponent<Rigidbody2D>();
         inverseMoveTime = 1f / MoveTime;
+        objectRenderer = GetComponent<Renderer>();
+        InitialUnitPlacingSet = false;
 	}
 
     protected void Move(Vector2 targetDestination)
@@ -65,7 +68,7 @@ public abstract class MovingObject : MonoBehaviour {
     //Co-routine for moving units from one space to next, takes a parameter end to specify where to move to.
     protected IEnumerator SmoothMovement(Vector3 end)
     {
-        Debug.Log(end.x + "," + end.y);
+//        Debug.Log(end.x + "," + end.y);
 
         var sqrRemainingDistance = (transform.position - end).sqrMagnitude;
 
@@ -79,14 +82,14 @@ public abstract class MovingObject : MonoBehaviour {
 
         
         //reached other side
-        if (Math.Abs(end.x - TargetColumn) < float.Epsilon)
+        if (Math.Abs(end.x - EndColumn) < float.Epsilon)
         {
             Invoke("Scored", ScoredDelay);
             
         }
         else
         {
-            isMoving = false;            
+            isMoving = false;
         }
     }
 
