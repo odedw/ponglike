@@ -33,13 +33,12 @@ public class Enemy : MovingObject
 
     Vector2 ComputeNextMove()
     {
-        Debug.Log("ComputeNextMove");
         if (!InitialUnitPlacingSet)
         {
             return new Vector2(StartColumn, Random.Range(1, GameState.Instance.Rows - 2));
         }
 
         return new Vector2(transform.position.x + UnitAdvanceDirection,
-            Mathf.Clamp(transform.position.y + Random.Range(-1, 1), 2, GameState.Instance.Columns - 2));
+            Mathf.Clamp(transform.position.y + Random.Range(-1, 2), 2, GameState.Instance.Columns - 2));
     }
 }
