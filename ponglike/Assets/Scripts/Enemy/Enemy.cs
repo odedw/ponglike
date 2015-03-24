@@ -17,11 +17,18 @@ public class Enemy : MovingObject
 
     protected override int UnitAdvanceDirection { get { return 1; }}
 
+    //AI
+    private MoveCalculator moveCalculator;
+    void Start()
+    {
+        base.Start();
+        moveCalculator = GetComponent<MoveCalculator>();
+    }
     void Update()
     {
         //If it's not the player's turn, or we're to compute move or we're moving, exit.
         if (!IsUnitsTurn || isMoving || nextMoveScheduled) return;
-
+        
         if (!fogOfWarReset)
         {
             ResetFogOfWar();
@@ -34,19 +41,8 @@ public class Enemy : MovingObject
 
     void NextMove()
     {
-        var nextMove = ComputeNextMove();
+        var nextMove = moveCalculator.CalculateNextMove(GameManager.Instance.BoardManager, !InitialUnitPlacingSet, StartColumn, UnitAdvanceDirection);
         Move(nextMove);
         nextMoveScheduled = false;
-    }
-
-    Vector2 ComputeNextMove()
-    {
-        if (!InitialUnitPlacingSet)
-        {
-            return new Vector2(StartColumn, Random.Range(1, GameState.Instance.Rows - 2));
-        }
-
-        return new Vector2(transform.position.x + UnitAdvanceDirection,
-            Mathf.Clamp(transform.position.y + Random.Range(-1, 2), 2, GameState.Instance.Columns - 2));
     }
 }
