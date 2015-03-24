@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Player : MovingObject
+public class Player : Opponent
 {
     public GameObject HighlightObject;
     private readonly List<Vector3> possibleMoves = new List<Vector3>();
@@ -18,19 +18,12 @@ public class Player : MovingObject
     protected override int UnitAdvanceDirection { get { return - 1; } }
     protected override int EndColumn { get { return 0; } }
     protected override bool DesiredFogOfWarState { get { return true; } }
-    
+    protected override bool ShouldAct { get { return IsUnitsTurn && !areMovesHighlighted && !isMoving; } }  
     private bool waitingForInputMovement;
 
 	// Update is called once per frame
-	void Update () {
-        //If it's not the player's turn, or we're waiting for input or we're moving, exit.
-        if (!IsUnitsTurn || areMovesHighlighted || isMoving) return;
-
-	    if (!fogOfWarReset)
-	    {
-            ResetFogOfWar();
-	    }
-
+    protected override void OpponentUpdate () {
+        //highlight moves for this turn
 	    ComputePossibleMoves();
 	    HighlightPossibleMoves();
 	    waitingForInputMovement = true;
@@ -87,5 +80,10 @@ public class Player : MovingObject
         areMovesHighlighted = false;
 
         Move(highlighter.transform.position);
+    }
+
+    protected override void PlaceBoardForOpponent()
+    {
+        Debug.Log("Player placed board");
     }
 }

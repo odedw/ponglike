@@ -2,7 +2,7 @@
 using System.Collections;
 using Random = UnityEngine.Random;
 
-public class Enemy : MovingObject
+public class Enemy : Opponent
 {
     public float MoveDelay = 5f;
 
@@ -14,30 +14,30 @@ public class Enemy : MovingObject
     protected override int StartColumn { get { return 0; }}
     protected override int EndColumn { get { return GameState.Instance.Columns - 1; } }
     protected override bool DesiredFogOfWarState { get { return false; } }
-
+    protected override bool ShouldAct { get { return IsUnitsTurn && !isMoving && !nextMoveScheduled; } }
     protected override int UnitAdvanceDirection { get { return 1; }}
 
     //AI
     private MoveCalculator moveCalculator;
-    void Start()
+    private BoardPlacer boardPlacer;
+
+    protected override void Start()
     {
         base.Start();
         moveCalculator = GetComponent<MoveCalculator>();
+        boardPlacer = GetComponent<BoardPlacer>();
     }
-    void Update()
-    {
-        //If it's not the player's turn, or we're to compute move or we're moving, exit.
-        if (!IsUnitsTurn || isMoving || nextMoveScheduled) return;
-        
-        if (!fogOfWarReset)
-        {
-            ResetFogOfWar();
-        }
 
+    protected override void PlaceBoardForOpponent()
+    {
+        boardPlacer.PlaceBoard(GameManager.Instance.BoardManager);
+    }
+
+    protected override void OpponentUpdate()
+    {
         Invoke("NextMove", MoveDelay);
         nextMoveScheduled = true;
     }
-
 
     void NextMove()
     {

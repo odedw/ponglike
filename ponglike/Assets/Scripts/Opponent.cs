@@ -2,28 +2,32 @@
 using UnityEngine;
 using System.Collections;
 
-public abstract class MovingObject : MonoBehaviour {
+public abstract class Opponent : MonoBehaviour {
 
     public float MoveTime = 0.1f;			//Time it will take object to move, in seconds.
     public LayerMask BlockingLayer;			//Layer on which collision will be checked.
     public float ScoredDelay = 0.5f;
+    public GameObject OpponentGameObject;
    
     private BoxCollider2D boxCollider; 		//The BoxCollider2D component attached to this object.
     private Rigidbody2D rb2D;				//The Rigidbody2D component attached to this object.
     private float inverseMoveTime;			//Used to make movement more efficient.
     private Renderer objectRenderer;
+    protected GameObject opponent;
 
     //states
     protected bool isMoving;
     protected abstract bool IsUnitsTurn { get; set; }
     protected bool InitialUnitPlacingSet { get { return objectRenderer.enabled; } set { objectRenderer.enabled = value; } }
     protected bool fogOfWarReset { get; set; }
+    protected bool boardPlacementPerformed { get; set; }
 
     //unit specific config
     protected abstract int StartColumn { get; }
     protected abstract int UnitAdvanceDirection { get; }
     protected abstract int EndColumn { get; }
     protected abstract bool DesiredFogOfWarState { get; }
+    protected abstract bool ShouldAct { get; }
 
     // Use this for initialization
     protected virtual void Start()
@@ -33,7 +37,24 @@ public abstract class MovingObject : MonoBehaviour {
         inverseMoveTime = 1f / MoveTime;
         objectRenderer = GetComponent<Renderer>();
         InitialUnitPlacingSet = false;
-	}
+
+        opponent = GameObject.Find(OpponentGameObject.name);
+    }
+
+    protected virtual void Update()
+    {
+        if (!ShouldAct) return;
+
+        //opponent sets the board
+        if (!boardPlacementPerformed) WaitForOpponentBoardPlacement();
+
+        //set fog of war
+        if (!fogOfWarReset) ResetFogOfWar();
+
+        OpponentUpdate();
+    }
+
+    protected abstract void OpponentUpdate();
 
     protected void Move(Vector2 targetDestination)
     {
@@ -101,6 +122,7 @@ public abstract class MovingObject : MonoBehaviour {
         IsUnitsTurn = false;
         InitialUnitPlacingSet = false;
         fogOfWarReset = false;
+        boardPlacementPerformed = false;
     }
 
     protected void ResetFogOfWar()
@@ -108,4 +130,14 @@ public abstract class MovingObject : MonoBehaviour {
         GameManager.Instance.BoardManager.SetAllFogOfWar(DesiredFogOfWarState);
         fogOfWarReset = true;
     }
+
+    //board placing
+    protected void WaitForOpponentBoardPlacement()
+    {
+        opponent.GetComponent<Opponent>().PlaceBoardForOpponent();
+        boardPlacementPerformed = true;
+    }
+
+    protected abstract void PlaceBoardForOpponent();
+
 }

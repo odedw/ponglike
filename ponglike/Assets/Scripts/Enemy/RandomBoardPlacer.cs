@@ -1,15 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class RandomBoardPlacer : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+public class RandomBoardPlacer : BoardPlacer {
+    public override void PlaceBoard(BoardManager boardManager)
+    {
+        Debug.Log("Board placer placed board");
+    }
 }

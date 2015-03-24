@@ -11,6 +11,6 @@ public class RandomMoveCalculator : MoveCalculator {
         }
 
         return new Vector2(transform.position.x + unitAdvanceDirection,
-            Mathf.Clamp(transform.position.y + Random.Range(-1, 2), 2, GameState.Instance.Columns - 2));
+            Mathf.Clamp(transform.position.y + Random.Range(-1, 2), 1, GameState.Instance.Rows - 2));
     }
 }
