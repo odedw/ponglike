@@ -30,7 +30,8 @@ public class Enemy : Opponent
 
     protected override void PlaceBoardForOpponent()
     {
-        boardPlacer.PlaceBoard(GameManager.Instance.BoardManager);
+        var spent = boardPlacer.PlaceBoard(GameManager.Instance.BoardManager, Gold);
+        Gold -= spent;
     }
 
     protected override void OpponentUpdate()

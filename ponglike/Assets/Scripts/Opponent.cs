@@ -8,6 +8,9 @@ public abstract class Opponent : MonoBehaviour {
     public LayerMask BlockingLayer;			//Layer on which collision will be checked.
     public float ScoredDelay = 0.5f;
     public GameObject OpponentGameObject;
+    public int Gold = 100;
+    public int GoldEachTurn = 100;
+    public int Health;
    
     private BoxCollider2D boxCollider; 		//The BoxCollider2D component attached to this object.
     private Rigidbody2D rb2D;				//The Rigidbody2D component attached to this object.
@@ -113,16 +116,24 @@ public abstract class Opponent : MonoBehaviour {
         else
         {
             isMoving = false;
+            GameManager.Instance.BoardManager.ActivateItemAtPosition(end, this);
         }
     }
 
     void Scored()
+    {
+        CleanUpOpponentTurn();
+    }
+
+    private void CleanUpOpponentTurn()
     {
         isMoving = false;
         IsUnitsTurn = false;
         InitialUnitPlacingSet = false;
         fogOfWarReset = false;
         boardPlacementPerformed = false;
+        GameManager.Instance.BoardManager.ClearItems();
+        Gold += GoldEachTurn;
     }
 
     protected void ResetFogOfWar()

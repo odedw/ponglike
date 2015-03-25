@@ -13,6 +13,7 @@ public class BoardManager : MonoBehaviour {
 
     private Transform boardHolder;
     private Dictionary<string, GameObject> fogOfWarByPosition = new Dictionary<string, GameObject>(); 
+    private Dictionary<string, GameObject> itemByPosition = new Dictionary<string, GameObject>(); 
 
     //Sets up the outer walls and floor (background) of the game board.
     void BoardSetup()
@@ -23,6 +24,7 @@ public class BoardManager : MonoBehaviour {
             DestroyObject(fogOfWar);
         }
         fogOfWarByPosition.Clear();
+       ClearItems();
         
         //fill
         boardHolder = new GameObject("Board").transform;
@@ -66,7 +68,9 @@ public class BoardManager : MonoBehaviour {
 
     public void SetFogOfWarForPosition(Vector3 position, bool shouldEnable)
     {
-        fogOfWarByPosition[position.ToString()].GetComponent<Renderer>().enabled = shouldEnable;
+        var key = position.ToString();
+        fogOfWarByPosition[key].GetComponent<Renderer>().enabled = shouldEnable;
+        if (itemByPosition.ContainsKey(key)) itemByPosition[key].GetComponent<Renderer>().enabled = true;
     }
 
     public void SetAllFogOfWar(bool shouldEnable)
@@ -76,5 +80,31 @@ public class BoardManager : MonoBehaviour {
             fogOfWar.GetComponent<Renderer>().enabled = shouldEnable;
 
         }
+    }
+
+    public void PlaceItem(Vector3 position, GameObject item)
+    {
+        itemByPosition[position.ToString()] = item;
+        item.transform.position = position;
+        item.transform.SetParent(boardHolder);
+        item.GetComponent<Renderer>().enabled = false;
+    }
+
+    public void ActivateItemAtPosition(Vector3 position, Opponent opponent)
+    {
+        if (!itemByPosition.ContainsKey(position.ToString())) return;
+
+        itemByPosition[position.ToString()].GetComponent<Item>().ActivateItem(opponent);
+
+
+    }
+
+    public void ClearItems()
+    {
+        foreach (var item in itemByPosition.Values)
+        {
+            DestroyObject(item);
+        }
+        itemByPosition.Clear();
     }
 }

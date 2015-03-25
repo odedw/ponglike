@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
 
     public BoardManager BoardManager { get; set; }
+    public Store Store { get; set; }
+
     private bool settingUp = true;	
 
     private void Awake()
@@ -19,6 +21,7 @@ public class GameManager : MonoBehaviour {
 
         //get components
         BoardManager = GetComponent<BoardManager>();
+        Store = GetComponent<Store>();
 
         InitGame();
     }
